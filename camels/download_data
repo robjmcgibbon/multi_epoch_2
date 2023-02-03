@@ -1,0 +1,54 @@
+#!/bin/bash
+
+base_dir="/disk01/rmcg/"
+#base_dir="/home/rmcg/data/"
+for sim in "IllustrisTNG" "SIMBA"; do
+    for i in {0..999}; do
+        mkdir -p "${base_dir}downloaded/camels/${sim}/LH_${i}"
+        cd "${base_dir}downloaded/camels/${sim}/LH_${i}"
+        wget -N "https://users.flatironinstitute.org/~camels/Rockstar/${sim}/LH_${i}/trees/tree_0_0_0.dat"
+        for j in {000..033}; do
+            wget -N "https://users.flatironinstitute.org/~camels/FOF_Subfind/${sim}/LH_${i}/fof_subhalo_tab_${j}.hdf5"
+        done
+        mkdir -p "${base_dir}downloaded/camels/${sim}_DM/LH_${i}"
+        cd "${base_dir}downloaded/camels/${sim}_DM/LH_${i}"
+        wget -N "https://users.flatironinstitute.org/~camels/Rockstar/${sim}_DM/LH_${i}/trees/tree_0_0_0.dat"
+    done
+    for i in {1..6}; do
+        # 1P_{param}_0 is not available for IllustrisTNG with param != 1. I need to delete the folders
+        for run in "n5" "n4" "n3" "n2" "n1" "0" "1" "2" "3" "4" "5"; do
+            mkdir -p "${base_dir}downloaded/camels/${sim}/1P_${i}_${run}"
+            cd "${base_dir}downloaded/camels/${sim}/1P_${i}_${run}"
+            wget -N "https://users.flatironinstitute.org/~camels/Rockstar/${sim}/1P_${i}_${run}/trees/tree_0_0_0.dat"
+            for j in {000..033}; do
+                wget -N "https://users.flatironinstitute.org/~camels/FOF_Subfind/${sim}/1P_${i}_${run}/fof_subhalo_tab_${j}.hdf5"
+            done
+            mkdir -p "${base_dir}downloaded/camels/${sim}_DM/1P_${i}_${run}"
+            cd "${base_dir}downloaded/camels/${sim}_DM/1P_${i}_${run}"
+            wget -N "https://users.flatironinstitute.org/~camels/Rockstar/${sim}_DM/1P_${i}_${run}/trees/tree_0_0_0.dat"
+        done
+    done
+    for i in {0..26}; do
+        mkdir -p "${base_dir}downloaded/camels/${sim}/CV_${i}"
+        cd "${base_dir}downloaded/camels/${sim}/CV_${i}"
+        wget -N "https://users.flatironinstitute.org/~camels/Rockstar/${sim}/CV_${i}/trees/tree_0_0_0.dat"
+        for j in {000..033}; do
+            wget -N "https://users.flatironinstitute.org/~camels/FOF_Subfind/${sim}/CV_${i}/fof_subhalo_tab_${j}.hdf5"
+        done
+        mkdir -p "${base_dir}downloaded/camels/${sim}_DM/CV_${i}"
+        cd "${base_dir}downloaded/camels/${sim}_DM/CV_${i}"
+        wget -N "https://users.flatironinstitute.org/~camels/Rockstar/${sim}_DM/CV_${i}/trees/tree_0_0_0.dat"
+    done
+    cd "${base_dir}downloaded/camels"
+    wget "https://users.flatironinstitute.org/~camels/Sims/${sim}/CosmoAstroSeed_params.txt"
+    j=0
+    for i in {1..6}; do
+        for run in "n5" "n4" "n3" "n2" "n1" "0" "1" "2" "3" "4" "5"; do
+            sed -i "s/1P_${j} /1P_${i}_${run} /" CosmoAstroSeed_params.txt
+            j=$((j + 1))
+        done
+    done
+    grep -v 'EX' CosmoAstroSeed_params.txt > "${sim}_params.txt"
+    rm CosmoAstroSeed_params.txt
+done
+# SIMBA run LH_196 has zero gas mass after I extract it. I think it may be corrupted. I've deleted it

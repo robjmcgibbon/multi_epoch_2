@@ -1,0 +1,28 @@
+n_dataset: 2
+n_estimators: 5
+n_process: 10
+train_volume_fraction: 0.7
+
+simulation: tng
+box_size: 100
+tree_algorithm: lhalotree
+run_number: 3
+redshift_to_predict: 0
+mask: [0]
+#name: TNG_z=0
+
+secondary_configs:
+- simulation: tng
+  box_size: 300
+  tree_algorithm: lhalotree
+  run_number: 3
+  redshift_to_predict: 0
+  mask: [0]
+
+- simulation: illustris
+  box_size: 100
+  tree_algorithm: lhalotree
+  run_number: 3
+  redshift_to_predict: 0
+  mask: [0]
+
